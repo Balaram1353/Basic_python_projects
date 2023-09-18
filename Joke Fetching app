@@ -1,0 +1,28 @@
+import tkinter as tk
+import ttkbootstrap as ttk
+import requests
+
+
+def fetch():
+    url = "https://v2.jokeapi.dev/joke/Programming/Any"
+    joke = requests.get(url).json()
+    if joke is not None and joke["type"] == "single":
+        str_var.set(joke["joke"])
+    elif joke is not None and joke["type"] == "twopart":
+        str_var.set(f"{joke['setup']}\n {joke['delivery']}")
+    else:
+        str_var.set("failed to fetch a joke")
+
+
+window = ttk.Window(themename="darkly")
+window.title("fetch jokes")
+
+str_var = tk.StringVar()
+
+label = ttk.Label(window, textvariable=str_var, wraplength=300)
+label.pack(pady=10)
+
+button = ttk.Button(window, text="Fetch", command=fetch)
+button.pack(pady=20)
+
+window.mainloop()
