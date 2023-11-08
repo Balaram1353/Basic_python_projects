@@ -1,0 +1,33 @@
+create database to_do_list;
+use to_do_list;
+create table cateogories (
+category_id int auto_increment primary key,
+category_name varchar(50) not null
+);
+create table tasks (
+	task_id int auto_increment primary key,
+    title varchar(255) not null,
+    task_description text,
+    due_date date,
+    created_at timestamp default current_timestamp,
+    completed boolean default 0,
+    category_id int,
+    foreign key (category_id) references cateogories(category_id)
+);
+
+insert into cateogories (category_name) values
+('personal'),
+('shopping');
+
+insert into tasks (title, task_description, due_date, category_id ) values
+('milk packet', 'take a 1lt packet if available else take 500ml', '2023-11-07', 2);
+
+select * from tasks;
+
+select t.*, c.category_name
+from tasks t
+join cateogories c on t.category_id = c.category_id;
+
+update tasks
+set completed = 1
+where task_id = 1;
