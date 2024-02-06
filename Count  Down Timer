@@ -1,0 +1,72 @@
+import ttkbootstrap as ttk 
+from tkinter import messagebox 
+ 
+ 
+def start_timer(): 
+    try: 
+        time_in_seconds = int(entry.get()) 
+        countdown(time_in_seconds) 
+    except ValueError: 
+        messagebox.showerror("Error", "Please enter a valid integer.") 
+ 
+ 
+def pause_timer(): 
+    global is_paused 
+    is_paused = True 
+ 
+ 
+def resume_timer(): 
+    global is_paused 
+    is_paused = False 
+    countdown(remaining_time) 
+ 
+ 
+def reset_timer(): 
+    global is_paused 
+    global remaining_time 
+    remaining_time = 0 
+    time_str.set("00:00") 
+    is_paused = False 
+ 
+ 
+def countdown(seconds): 
+    global remaining_time 
+    remaining_time = seconds 
+    while remaining_time > 0 and not is_paused: 
+        minutes, secs = divmod(remaining_time, 60) 
+        time_str.set(f"{minutes:02}:{secs:02}") 
+        root.update() 
+        root.after(1000) 
+        remaining_time -= 1 
+    if remaining_time == 0: 
+        time_str.set("00:00") 
+        messagebox.showinfo("Timer", "Time's up!") 
+ 
+ 
+root = ttk.Window(themename="darkly") 
+root.title("Countdown Timer") 
+ 
+time_str = ttk.StringVar() 
+time_str.set("00:00") 
+ 
+entry_label = ttk.Label(root, text="Enter time (seconds):") 
+entry_label.pack() 
+ 
+entry = ttk.Entry(root) 
+entry.pack() 
+ 
+timer_label = ttk.Label(root, textvariable=time_str, font=("Helvetica", 
+48)) 
+timer_label.pack() 
+ 
+start_button = ttk.Button(root, text="Start", command=start_timer) 
+pause_button = ttk.Button(root, text="Pause", command=pause_timer) 
+resume_button = ttk.Button(root, text="Resume", command=resume_timer) 
+reset_button = ttk.Button(root, text="Reset", command=reset_timer) 
+start_button.pack(side=ttk.LEFT, padx=5) 
+pause_button.pack(side=ttk.LEFT, padx=5) 
+resume_button.pack(side=ttk.LEFT, padx=5) 
+reset_button.pack(side=ttk.LEFT, padx=5) 
+is_paused = False 
+remaining_time = 0 
+root.mainloop() 
