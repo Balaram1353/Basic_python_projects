@@ -1,0 +1,39 @@
+from bs4 import BeautifulSoup as bs
+import requests
+import pandas as pd
+
+
+def get_quotes(url):
+    all_quotes = []
+    all_authors = []
+    while url:
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            soup = bs(response.content, 'html.parser')
+            quotes = soup.find_all('span', class_='text')
+            authors = soup.find_all('small', class_='author') 
+            for quote, author in zip(quotes, authors):
+                all_quotes.append(quote.text[1:-1])
+                all_authors.append(author.text)
+                
+            link_next = soup.find('li', class_='next')
+            if link_next:
+                link = link_next.find('a')
+                if link:
+                    next_page_link = link.get('href')
+                    url = 'https://quotes.toscrape.com' + next_page_link if next_page_link else None
+            else:
+                url = None
+    return all_quotes, all_authors
+
+
+url = 'https://quotes.toscrape.com/'
+quotes, authors = get_quotes(url)
+
+csv_file_path = 'quotes.csv'
+
+df = pd.DataFrame({'Quotes': quotes, 'Authors': authors})
+print(df)
+df.to_excel('excel_file_path', index=False, encoding='utf-8', engine='openpyxl')
+print('Done')
